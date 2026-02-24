@@ -1,0 +1,259 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		BC0000000000000000000000 /* FileOpenerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0000000000000000000000 /* FileOpenerApp.swift */; };
+		BC0000000000000000000001 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0000000000000000000001 /* Models.swift */; };
+		BC0000000000000000000002 /* FileAssocService.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0000000000000000000002 /* FileAssocService.swift */; };
+		BC0000000000000000000003 /* L10n.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0000000000000000000003 /* L10n.swift */; };
+		BC0000000000000000000004 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0000000000000000000004 /* ContentView.swift */; };
+		BC0000000000000000000005 /* ChangeAppSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0000000000000000000005 /* ChangeAppSheet.swift */; };
+		BC0000000000000000000006 /* BatchReplaceSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0000000000000000000006 /* BatchReplaceSheet.swift */; };
+		AAAA000000000000000021 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = AAAA000000000000000016 /* Localizable.strings */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		BB0000000000000000000000 /* FileOpenerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileOpenerApp.swift; sourceTree = "<group>"; };
+		BB0000000000000000000001 /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
+		BB0000000000000000000002 /* FileAssocService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileAssocService.swift; sourceTree = "<group>"; };
+		BB0000000000000000000003 /* L10n.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = L10n.swift; sourceTree = "<group>"; };
+		BB0000000000000000000004 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		BB0000000000000000000005 /* ChangeAppSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangeAppSheet.swift; sourceTree = "<group>"; };
+		BB0000000000000000000006 /* BatchReplaceSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BatchReplaceSheet.swift; sourceTree = "<group>"; };
+		AAAA000000000000000008 /* FileOpener.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FileOpener.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		AAAA000000000000000022 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
+		AAAA000000000000000023 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Localizable.strings"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		AAAA000000000000000007 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		AAAA000000000000000002 = {
+			isa = PBXGroup;
+			children = (
+				AAAA000000000000000013 /* FileOpener */,
+				AAAA000000000000000003 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		AAAA000000000000000003 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				AAAA000000000000000008 /* FileOpener.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		AAAA000000000000000013 /* FileOpener */ = {
+			isa = PBXGroup;
+			children = (
+				BB0000000000000000000000 /* FileOpenerApp.swift */,
+				BB0000000000000000000001 /* Models.swift */,
+				BB0000000000000000000002 /* FileAssocService.swift */,
+				BB0000000000000000000003 /* L10n.swift */,
+				BB0000000000000000000004 /* ContentView.swift */,
+				BB0000000000000000000005 /* ChangeAppSheet.swift */,
+				BB0000000000000000000006 /* BatchReplaceSheet.swift */,
+				AAAA000000000000000016 /* Localizable.strings */,
+			);
+			path = FileOpener;
+			sourceTree = "<group>";
+		};
+		AAAA000000000000000016 /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				AAAA000000000000000022 /* en */,
+				AAAA000000000000000023 /* zh-Hans */,
+			);
+			name = Localizable.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		AAAA000000000000000004 /* FileOpener */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = AAAA000000000000000012 /* Build configuration list for PBXNativeTarget "FileOpener" */;
+			buildPhases = (
+				AAAA000000000000000005 /* Sources */,
+				AAAA000000000000000007 /* Frameworks */,
+				AAAA000000000000000006 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = FileOpener;
+			productName = FileOpener;
+			productReference = AAAA000000000000000008 /* FileOpener.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		AAAA000000000000000001 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1540;
+				LastUpgradeCheck = 1540;
+				TargetAttributes = {
+					AAAA000000000000000004 = {
+						CreatedOnToolsVersion = 15.4;
+					};
+				};
+			};
+			buildConfigurationList = AAAA000000000000000011 /* Build configuration list for PBXProject "FileOpener" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+				"zh-Hans",
+			);
+			mainGroup = AAAA000000000000000002;
+			productRefGroup = AAAA000000000000000003 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				AAAA000000000000000004 /* FileOpener */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		AAAA000000000000000006 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AAAA000000000000000021 /* Localizable.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		AAAA000000000000000005 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BC0000000000000000000000 /* FileOpenerApp.swift in Sources */,
+				BC0000000000000000000001 /* Models.swift in Sources */,
+				BC0000000000000000000002 /* FileAssocService.swift in Sources */,
+				BC0000000000000000000003 /* L10n.swift in Sources */,
+				BC0000000000000000000004 /* ContentView.swift in Sources */,
+				BC0000000000000000000005 /* ChangeAppSheet.swift in Sources */,
+				BC0000000000000000000006 /* BatchReplaceSheet.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		AAAA000000000000000009 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSET_CATALOG_COMPILER_OPTIMIZATION_LEVEL = space;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				INFOPLIST_FILE = FileOpener/Info.plist;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright 2025 kentxxq. MIT License.";
+				INFOPLIST_KEY_NSPrincipalClass = NSApplication;
+				INFOPLIST_KEY_CFBundleDisplayName = "File Opener";
+				MACOS_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.kentxxq.file-opener";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = "";
+				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGNING_ALLOWED = NO;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		AAAA000000000000000010 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSET_CATALOG_COMPILER_OPTIMIZATION_LEVEL = space;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				INFOPLIST_FILE = FileOpener/Info.plist;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright 2025 kentxxq. MIT License.";
+				INFOPLIST_KEY_NSPrincipalClass = NSApplication;
+				INFOPLIST_KEY_CFBundleDisplayName = "File Opener";
+				MACOS_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.kentxxq.file-opener";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = "";
+				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGNING_ALLOWED = NO;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		AAAA000000000000000011 /* Build configuration list for PBXProject "FileOpener" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AAAA000000000000000009 /* Debug */,
+				AAAA000000000000000010 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		AAAA000000000000000012 /* Build configuration list for PBXNativeTarget "FileOpener" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AAAA000000000000000009 /* Debug */,
+				AAAA000000000000000010 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = AAAA000000000000000001 /* Project object */;
+}
