@@ -73,6 +73,7 @@ struct BatchReplaceSheet: View {
             footer
         }
         .frame(width: 460, height: 500)
+        .animation(nil, value: selectedSourceId)
     }
 
     // MARK: - 第一步

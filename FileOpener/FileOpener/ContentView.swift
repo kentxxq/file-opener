@@ -63,6 +63,7 @@ struct ContentView: View {
                         showBatchSheet = false
                         selectedItem = nil
                     }
+                    .transition(.opacity)
 
                 if showBatchSheet {
                     BatchReplaceSheet(allItems: allItems, onComplete: { success, fail in
@@ -75,6 +76,7 @@ struct ContentView: View {
                     .background(Color(NSColor.windowBackgroundColor))
                     .clipShape(RoundedRectangle(cornerRadius: 12))
                     .shadow(color: .black.opacity(0.3), radius: 20, y: 10)
+                    .transition(.opacity)
                     .environmentObject(service)
                     .environmentObject(appLocale)
                 } else if let item = selectedItem {
@@ -86,6 +88,7 @@ struct ContentView: View {
                     .background(Color(NSColor.windowBackgroundColor))
                     .clipShape(RoundedRectangle(cornerRadius: 12))
                     .shadow(color: .black.opacity(0.3), radius: 20, y: 10)
+                    .transition(.opacity)
                 }
             }
         }
@@ -98,6 +101,8 @@ struct ContentView: View {
         if let toast {
             ToastView(data: toast)
                 .padding(.bottom, 20)
+                .transition(.move(edge: .bottom).combined(with: .opacity))
+                .animation(.easeInOut(duration: 0.2), value: toast.id)
         }
     }
 
@@ -150,6 +155,8 @@ struct ContentView: View {
                         Text(appLocale.s("btn.refresh"))
                     } icon: {
                         Image(systemName: "arrow.clockwise")
+                            .rotationEffect(.degrees(refreshing ? 360 : 0))
+                            .animation(refreshing ? .linear(duration: 0.8).repeatForever(autoreverses: false) : .default, value: refreshing)
                     }
                     .fixedSize()
                 }
@@ -295,7 +302,9 @@ struct ContentView: View {
     func showToast(_ message: String, type: ToastData.ToastType) {
         toast = ToastData(message: message, type: type)
         DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-            toast = nil
+            withAnimation(.easeInOut(duration: 0.2)) {
+                toast = nil
+            }
         }
     }
 }
