@@ -1,0 +1,58 @@
+version: '3'
+
+vars:
+  PROJECT_NAME: FileOpener
+  PROJECT_PATH: FileOpener/{{.PROJECT_NAME}}.xcodeproj
+  BUILD_DIR: FileOpener/build
+  RELEASE_DIR: FileOpener/release
+  APP_PATH: "{{.RELEASE_DIR}}/{{.PROJECT_NAME}}.app"
+
+tasks:
+  default:
+    cmds:
+      - task: build
+
+  build:
+    desc: 构建 Release 版本的 .app
+    cmds:
+      - |
+        xcodebuild -project {{.PROJECT_PATH}} \
+          -scheme {{.PROJECT_NAME}} \
+          -configuration Release \
+          -destination "platform=macOS" \
+          OBJROOT="$(pwd)/{{.BUILD_DIR}}/obj" \
+          SYMROOT="$(pwd)/{{.BUILD_DIR}}/sym" \
+          CODE_SIGNING_ALLOWED=NO \
+          build
+    sources:
+      - FileOpener/FileOpener/**/*.swift
+      - FileOpener/FileOpener/Info.plist
+    generates:
+      - "{{.BUILD_DIR}}/sym/Release/{{.PROJECT_NAME}}.app"
+
+  run:
+    desc: 构建并直接运行程序
+    deps: [build]
+    cmds:
+      - open {{.BUILD_DIR}}/sym/Release/{{.PROJECT_NAME}}.app
+
+  release:
+    desc: 清理并打包到 release 目录
+    deps: [clean]
+    cmds:
+      - task: build
+      - mkdir -p {{.RELEASE_DIR}}
+      - cp -R {{.BUILD_DIR}}/sym/Release/{{.PROJECT_NAME}}.app {{.RELEASE_DIR}}/
+      - echo "打包完成！构建产物在 {{.APP_PATH}}"
+      - du -sh {{.APP_PATH}}
+
+  clean:
+    desc: 清理构建缓存和发布目录
+    cmds:
+      - rm -rf {{.BUILD_DIR}}
+      - rm -rf {{.RELEASE_DIR}}
+
+  xcode:
+    desc: 在 Xcode 中打开项目
+    cmds:
+      - open {{.PROJECT_PATH}}
