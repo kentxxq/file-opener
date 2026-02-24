@@ -25,3 +25,4 @@ DerivedData/
 
 # Build scripts
 Taskfile.yml.local
+.task/
