@@ -77,14 +77,14 @@ struct ContentView: View {
     // MARK: - 工具栏（固定尺寸，避免语言切换或刷新时布局跳动）
 
     var toolbar: some View {
-        HStack(spacing: 10) {
-            // 搜索框
+        HStack(spacing: 12) {
+            // ── 左侧：搜索框 + 统计 ──
             HStack(spacing: 6) {
                 Image(systemName: "magnifyingglass")
                     .foregroundStyle(.secondary)
                 TextField(LocalizedStringKey("search.placeholder"), text: $searchQuery)
                     .textFieldStyle(.plain)
-                    .frame(minWidth: 200)
+                    .frame(minWidth: 180)
                 if !searchQuery.isEmpty {
                     Button { searchQuery = "" } label: {
                         Image(systemName: "xmark.circle.fill")
@@ -98,58 +98,57 @@ struct ContentView: View {
             .background(.background.secondary)
             .clipShape(RoundedRectangle(cornerRadius: 8))
 
-            // 统计（固定最小宽度避免跳动）
             Text("\(filteredItems.count) / \(allItems.count) \(appLocale.s("stat.suffix"))")
                 .font(.caption)
                 .foregroundStyle(.secondary)
-                .frame(minWidth: 80)
+                .fixedSize()
 
             Spacer()
 
-            // 语言切换（固定宽度）
-            Button(action: { appLocale.toggle() }) {
-                Text(appLocale.switchLabel)
-                    .font(.system(size: 13, weight: .medium))
-                    .frame(width: 28, height: 16)
-            }
-            .buttonStyle(.bordered)
-            .help("切换语言 / Switch Language")
-
-            // 批量替换（固定宽度避免中英文宽度不同）
-            Button {
-                showBatchSheet = true
-            } label: {
-                Label {
-                    Text(appLocale.s("btn.batchReplace"))
-                } icon: {
-                    Image(systemName: "arrow.2.squarepath")
+            // ── 右侧：操作按钮组 ──
+            HStack(spacing: 8) {
+                // 批量替换
+                Button {
+                    showBatchSheet = true
+                } label: {
+                    Label(appLocale.s("btn.batchReplace"), systemImage: "arrow.2.squarepath")
+                        .fixedSize()
                 }
-            }
-            .buttonStyle(.bordered)
-            .frame(width: 120)
+                .controlSize(.regular)
 
-            // 刷新（固定宽度，ProgressView 和 Label 共用同一尺寸）
-            Button {
-                Task { await refresh() }
-            } label: {
-                // 用 ZStack 保持按钮大小不变
-                ZStack {
-                    Label {
-                        Text(appLocale.s("btn.refresh"))
-                    } icon: {
-                        Image(systemName: "arrow.clockwise")
+                // 刷新（ZStack 保持按钮尺寸一致）
+                Button {
+                    Task { await refresh() }
+                } label: {
+                    ZStack {
+                        Label(appLocale.s("btn.refresh"), systemImage: "arrow.clockwise")
+                            .fixedSize()
+                            .opacity(refreshing ? 0 : 1)
+
+                        ProgressView()
+                            .progressViewStyle(.circular)
+                            .scaleEffect(0.6)
+                            .opacity(refreshing ? 1 : 0)
                     }
-                    .opacity(refreshing ? 0 : 1)
-
-                    ProgressView()
-                        .progressViewStyle(.circular)
-                        .scaleEffect(0.7)
-                        .opacity(refreshing ? 1 : 0)
                 }
+                .controlSize(.regular)
+                .disabled(refreshing)
             }
             .buttonStyle(.bordered)
-            .frame(width: 80)
-            .disabled(refreshing)
+
+            // ── 分隔符 ──
+            Divider()
+                .frame(height: 20)
+
+            // ── 设置区域：语言切换 ──
+            Button(action: { appLocale.toggle() }) {
+                Image(systemName: "globe")
+                    .imageScale(.medium)
+                Text(appLocale.switchLabel)
+                    .font(.system(size: 12, weight: .medium))
+            }
+            .buttonStyle(.borderless)
+            .help("切换语言 / Switch Language")
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 10)
