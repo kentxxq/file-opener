@@ -114,26 +114,23 @@ struct ContentView: View {
                     Label(appLocale.s("btn.batchReplace"), systemImage: "arrow.2.squarepath")
                         .fixedSize()
                 }
-                .controlSize(.regular)
 
-                // 刷新（ZStack 保持按钮尺寸一致）
+                // 刷新（旋转图标指示加载中，和批量替换按钮结构一致）
                 Button {
                     Task { await refresh() }
                 } label: {
-                    ZStack {
-                        Label(appLocale.s("btn.refresh"), systemImage: "arrow.clockwise")
-                            .fixedSize()
-                            .opacity(refreshing ? 0 : 1)
-
-                        ProgressView()
-                            .progressViewStyle(.circular)
-                            .scaleEffect(0.6)
-                            .opacity(refreshing ? 1 : 0)
+                    Label {
+                        Text(appLocale.s("btn.refresh"))
+                    } icon: {
+                        Image(systemName: "arrow.clockwise")
+                            .rotationEffect(.degrees(refreshing ? 360 : 0))
+                            .animation(refreshing ? .linear(duration: 0.8).repeatForever(autoreverses: false) : .default, value: refreshing)
                     }
+                    .fixedSize()
                 }
-                .controlSize(.regular)
                 .disabled(refreshing)
             }
+            .controlSize(.regular)
             .buttonStyle(.bordered)
 
             // ── 分隔符 ──
