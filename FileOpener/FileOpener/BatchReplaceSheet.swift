@@ -7,6 +7,7 @@ struct BatchReplaceSheet: View {
     let onComplete: (Int, Int) -> Void   // (successCount, failCount)
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject private var service: FileAssocService
+    @EnvironmentObject private var appLocale: AppLocale
 
     // 两步状态
     @State private var selectedSourceId: String? = nil
@@ -113,7 +114,7 @@ struct BatchReplaceSheet: View {
                                     Text(item.app.bundleId).font(.caption).foregroundStyle(.secondary)
                                 }
                                 Spacer()
-                                Text(String(format: NSLocalizedString("batch.extCount", comment: ""), item.count))
+                                Text(String(format: appLocale.s("batch.extCount"), item.count))
                                     .font(.caption)
                                     .padding(.horizontal, 8)
                                     .padding(.vertical, 3)
@@ -227,7 +228,7 @@ struct BatchReplaceSheet: View {
                         ProgressView().progressViewStyle(.circular).scaleEffect(0.7)
                         Text(LocalizedStringKey("batch.processing"))
                     } else {
-                        Text("\(NSLocalizedString("btn.batchConfirm", comment: "")) (\(affectedItems.count))")
+                        Text("\(appLocale.s("btn.batchConfirm")) (\(affectedItems.count))")
                     }
                 }
                 .buttonStyle(.borderedProminent)

@@ -4,12 +4,14 @@ import SwiftUI
 
 struct ContentView: View {
     @EnvironmentObject private var service: FileAssocService
+    @EnvironmentObject private var appLocale: AppLocale
 
     @State private var allItems: [FileAssocItem] = []
     @State private var searchQuery: String = ""
     @State private var loading = true
     @State private var refreshing = false
     @State private var toast: ToastData? = nil
+    @State private var selectedIds: Set<String> = []
 
     // 弹窗状态
     @State private var selectedItem: FileAssocItem? = nil
@@ -56,13 +58,12 @@ struct ContentView: View {
         }
         .sheet(isPresented: $showBatchSheet) {
             BatchReplaceSheet(allItems: allItems) { success, fail in
-                showToast(
-                    String(format: NSLocalizedString("toast.batchSuccess", comment: ""), success, fail),
-                    type: fail == 0 ? .success : .error
-                )
+                showToast(appLocale.s("toast.batchSuccess", success, fail),
+                          type: fail == 0 ? .success : .error)
                 Task { await loadData() }
             }
             .environmentObject(service)
+            .environmentObject(appLocale)
         }
     }
 
@@ -91,11 +92,22 @@ struct ContentView: View {
             .clipShape(RoundedRectangle(cornerRadius: 8))
 
             // 统计
-            Text("\(filteredItems.count) / \(allItems.count) \(NSLocalizedString("stat.suffix", comment: ""))")
+            Text("\(filteredItems.count) / \(allItems.count) \(appLocale.s("stat.suffix"))")
                 .font(.caption)
                 .foregroundStyle(.secondary)
 
             Spacer()
+
+            // 语言切换
+            Button(action: {
+                appLocale.toggle()
+            }) {
+                Text(appLocale.switchLabel)
+                    .font(.system(size: 13, weight: .medium))
+                    .frame(width: 28)
+            }
+            .buttonStyle(.bordered)
+            .help("切换语言 / Switch Language")
 
             // 批量替换
             Button {
@@ -122,10 +134,10 @@ struct ContentView: View {
         .padding(.vertical, 10)
     }
 
-    // MARK: - 表格
+    // MARK: - 表格（带行选中）
 
     var tableView: some View {
-        Table(filteredItems) {
+        Table(filteredItems, selection: $selectedIds) {
             TableColumn(LocalizedStringKey("table.ext")) { item in
                 ExtBadgeView(ext: item.ext)
             }
@@ -162,13 +174,18 @@ struct ContentView: View {
             .width(60)
 
             TableColumn(LocalizedStringKey("table.action")) { item in
-                Button(LocalizedStringKey("btn.change")) {
+                Button {
                     selectedItem = item
+                } label: {
+                    Text(LocalizedStringKey("btn.change"))
+                        .frame(minWidth: 44)
                 }
-                .buttonStyle(.borderless)
+                .buttonStyle(.borderedProminent)
+                .tint(item.availableApps.isEmpty ? .gray : .blue)
+                .controlSize(.small)
                 .disabled(item.availableApps.isEmpty)
             }
-            .width(60)
+            .width(70)
         }
     }
 
@@ -208,7 +225,7 @@ struct ContentView: View {
         refreshing = true
         await loadData()
         refreshing = false
-        showToast(NSLocalizedString("toast.refreshed", comment: ""), type: .success)
+        showToast(appLocale.s("toast.refreshed"), type: .success)
     }
 
     func applyChange(ext: String, app: AppInfo) {
@@ -222,9 +239,9 @@ struct ContentView: View {
                     availableApps: allItems[idx].availableApps
                 )
             }
-            showToast(String(format: NSLocalizedString("toast.setSuccess", comment: ""), ext, app.name), type: .success)
+            showToast(appLocale.s("toast.setSuccess", ext, app.name), type: .success)
         } else {
-            showToast(String(format: NSLocalizedString("toast.setFailed", comment: ""), result.error ?? ""), type: .error)
+            showToast(appLocale.s("toast.setFailed", result.error ?? ""), type: .error)
         }
     }
 
