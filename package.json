@@ -1,0 +1,24 @@
+{
+    "name": "file-opener",
+    "version": "1.2.0",
+    "description": "macOS 文件关联管理器 - 查询与修改文件后缀的默认打开方式",
+    "main": "./out/main/index.js",
+    "author": "kentxxq",
+    "license": "MIT",
+    "scripts": {
+        "dev": "electron-vite dev",
+        "build": "electron-vite build",
+        "preview": "electron-vite preview",
+        "package": "electron-vite build && electron-builder --mac --config electron-builder.yml"
+    },
+    "dependencies": {
+        "vue": "^3.5.28"
+    },
+    "devDependencies": {
+        "@vitejs/plugin-vue": "^5.2.0",
+        "electron": "^33.4.11",
+        "electron-builder": "^25.1.8",
+        "electron-vite": "^2.3.0",
+        "typescript": "^5.7.0"
+    }
+}
