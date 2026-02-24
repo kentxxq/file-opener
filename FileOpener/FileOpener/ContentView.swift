@@ -22,7 +22,7 @@ struct ContentView: View {
         let q = searchQuery.trimmingCharacters(in: .whitespaces).lowercased()
         if q.isEmpty { return allItems }
         return allItems.filter {
-            $0.ext.lowercased().contains(q) ||
+            ".\($0.ext)".lowercased().contains(q) ||
             $0.uti.lowercased().contains(q) ||
             ($0.defaultApp?.name.lowercased().contains(q) ?? false)
         }
