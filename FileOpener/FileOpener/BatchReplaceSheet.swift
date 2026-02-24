@@ -5,7 +5,7 @@ import SwiftUI
 struct BatchReplaceSheet: View {
     let allItems: [FileAssocItem]
     let onComplete: (Int, Int) -> Void   // (successCount, failCount)
-    @Environment(\.dismiss) private var dismiss
+    var onDismiss: () -> Void = {}
     @EnvironmentObject private var service: FileAssocService
     @EnvironmentObject private var appLocale: AppLocale
 
@@ -215,7 +215,7 @@ struct BatchReplaceSheet: View {
 
     var footer: some View {
         HStack {
-            Button(LocalizedStringKey("btn.close")) { dismiss() }
+            Button(LocalizedStringKey("btn.close")) { onDismiss() }
                 .keyboardShortcut(.escape)
 
             Spacer()
@@ -248,7 +248,6 @@ struct BatchReplaceSheet: View {
         let successCount = results.filter { $0.success }.count
         let failCount = results.count - successCount
         onComplete(successCount, failCount)
-        dismiss()
     }
 }
 

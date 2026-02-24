@@ -45,20 +45,33 @@ struct ContentView: View {
         .overlay(alignment: .bottom) {
             toastOverlay
         }
+        .overlay {
+            // 批量替换弹窗（点击半透明背景关闭）
+            if showBatchSheet {
+                Color.black.opacity(0.3)
+                    .ignoresSafeArea()
+                    .onTapGesture { showBatchSheet = false }
+
+                BatchReplaceSheet(allItems: allItems, onComplete: { success, fail in
+                    showToast(appLocale.s("toast.batchSuccess", success, fail),
+                              type: fail == 0 ? .success : .error)
+                    Task { await loadData() }
+                    showBatchSheet = false
+                }, onDismiss: {
+                    showBatchSheet = false
+                })
+                .environmentObject(service)
+                .environmentObject(appLocale)
+                .shadow(color: .black.opacity(0.3), radius: 20)
+                .transition(.opacity.combined(with: .scale(scale: 0.95)))
+            }
+        }
+        .animation(.easeInOut(duration: 0.15), value: showBatchSheet)
         .task { await loadData() }
         .sheet(item: $selectedItem) { item in
             ChangeAppSheet(item: item) { app in
                 applyChange(ext: item.ext, app: app)
             }
-        }
-        .sheet(isPresented: $showBatchSheet) {
-            BatchReplaceSheet(allItems: allItems) { success, fail in
-                showToast(appLocale.s("toast.batchSuccess", success, fail),
-                          type: fail == 0 ? .success : .error)
-                Task { await loadData() }
-            }
-            .environmentObject(service)
-            .environmentObject(appLocale)
         }
     }
 
