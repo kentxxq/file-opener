@@ -57,6 +57,15 @@ struct ContentView: View {
     var customSheetsOverlay: some View {
         ZStack {
             if showBatchSheet || selectedItem != nil {
+                // 隐藏的 ESC 监听按钮
+                Button("") {
+                    showBatchSheet = false
+                    selectedItem = nil
+                }
+                .keyboardShortcut(.escape, modifiers: [])
+                .opacity(0)
+                .allowsHitTesting(false)
+
                 Color.black.opacity(0.4)
                     .ignoresSafeArea()
                     .onTapGesture {
@@ -91,10 +100,6 @@ struct ContentView: View {
                     .transition(.opacity)
                 }
             }
-        }
-        .onExitCommand {
-            showBatchSheet = false
-            selectedItem = nil
         }
     }
 
