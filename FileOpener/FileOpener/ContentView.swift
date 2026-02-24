@@ -153,88 +153,60 @@ struct ContentView: View {
 
     // MARK: - 表格（带行选中 + 固定列宽）
 
-    // 各列宽度比例：后缀 10%, UTI 25%, 默认应用 35%, 可选数 12%, 操作 18%
-    private let colRatios: [CGFloat] = [0.10, 0.25, 0.35, 0.12, 0.18]
-
     var tableView: some View {
-        GeometryReader { geo in
-            let totalWidth = geo.size.width
-            let widths = colRatios.map { $0 * totalWidth }
-
-            VStack(spacing: 0) {
-                // 表头
-                HStack(spacing: 0) {
-                    headerCell(appLocale.s("table.ext"), width: widths[0])
-                    headerCell(appLocale.s("table.uti"), width: widths[1])
-                    headerCell(appLocale.s("table.defaultApp"), width: widths[2])
-                    headerCell(appLocale.s("table.availableCount"), width: widths[3], alignment: .center)
-                    headerCell(appLocale.s("table.action"), width: widths[4], alignment: .center)
-                }
-                .padding(.horizontal, 16)
-                .padding(.vertical, 6)
-                .background(Color.primary.opacity(0.04))
-
-                Divider()
-
-                // 数据行
-                List(filteredItems, selection: $selectedIds) { item in
-                    HStack(spacing: 0) {
-                        ExtBadgeView(ext: item.ext)
-                            .frame(width: widths[0], alignment: .leading)
-
-                        Text(item.uti)
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                            .lineLimit(1)
-                            .help(item.uti)
-                            .frame(width: widths[1], alignment: .leading)
-
-                        Group {
-                            if let app = item.defaultApp {
-                                HStack(spacing: 6) {
-                                    AppIconView(bundleId: app.bundleId)
-                                        .frame(width: 18, height: 18)
-                                    Text(app.name)
-                                        .lineLimit(1)
-                                }
-                            } else {
-                                Text(appLocale.s("table.notSet"))
-                                    .foregroundStyle(.secondary)
-                                    .italic()
-                            }
-                        }
-                        .frame(width: widths[2], alignment: .leading)
-
-                        Text("\(item.availableApps.count)")
-                            .foregroundStyle(.secondary)
-                            .font(.caption)
-                            .frame(width: widths[3], alignment: .center)
-
-                        Button {
-                            selectedItem = item
-                        } label: {
-                            Text(appLocale.s("btn.change"))
-                                .frame(minWidth: 40)
-                        }
-                        .buttonStyle(.borderedProminent)
-                        .tint(item.availableApps.isEmpty ? .gray : .blue)
-                        .controlSize(.small)
-                        .disabled(item.availableApps.isEmpty)
-                        .frame(width: widths[4], alignment: .center)
-                    }
-                    .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
-                }
-                .listStyle(.plain)
+        Table(filteredItems, selection: $selectedIds) {
+            TableColumn(LocalizedStringKey("table.ext")) { item in
+                ExtBadgeView(ext: item.ext)
             }
-        }
-    }
+            .width(min: 80, ideal: 90, max: 100)
 
-    private func headerCell(_ title: String, width: CGFloat, alignment: Alignment = .leading) -> some View {
-        Text(title)
-            .font(.caption)
-            .fontWeight(.medium)
-            .foregroundStyle(.secondary)
-            .frame(width: width, alignment: alignment)
+            TableColumn(LocalizedStringKey("table.uti")) { item in
+                Text(item.uti)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .help(item.uti)
+                    .lineLimit(1)
+            }
+            .width(min: 160, ideal: 220, max: 320)
+
+            TableColumn(LocalizedStringKey("table.defaultApp")) { item in
+                if let app = item.defaultApp {
+                    HStack(spacing: 6) {
+                        AppIconView(bundleId: app.bundleId)
+                            .frame(width: 18, height: 18)
+                        Text(app.name)
+                            .lineLimit(1)
+                    }
+                } else {
+                    Text(LocalizedStringKey("table.notSet"))
+                        .foregroundStyle(.secondary)
+                        .italic()
+                }
+            }
+            .width(min: 120, ideal: 200)
+
+            TableColumn(LocalizedStringKey("table.availableCount")) { item in
+                Text("\(item.availableApps.count)")
+                    .foregroundStyle(.secondary)
+                    .font(.caption)
+                    .frame(maxWidth: .infinity, alignment: .center)
+            }
+            .width(70)
+
+            TableColumn(LocalizedStringKey("table.action")) { item in
+                Button {
+                    selectedItem = item
+                } label: {
+                    Text(appLocale.s("btn.change"))
+                        .frame(width: 44)
+                }
+                .buttonStyle(.borderedProminent)
+                .tint(item.availableApps.isEmpty ? .gray : .blue)
+                .controlSize(.small)
+                .disabled(item.availableApps.isEmpty)
+            }
+            .width(64)
+        }
     }
 
     // MARK: - 加载 / 空状态
