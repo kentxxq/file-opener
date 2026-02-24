@@ -43,13 +43,8 @@ struct ContentView: View {
         }
         .frame(minWidth: 700, minHeight: 500)
         .overlay(alignment: .bottom) {
-            if let toast {
-                ToastView(data: toast)
-                    .padding(.bottom, 20)
-                    .transition(.move(edge: .bottom).combined(with: .opacity))
-            }
+            toastOverlay
         }
-        .animation(.easeInOut(duration: 0.2), value: toast?.id)
         .task { await loadData() }
         .sheet(item: $selectedItem) { item in
             ChangeAppSheet(item: item) { app in
@@ -67,7 +62,19 @@ struct ContentView: View {
         }
     }
 
-    // MARK: - 工具栏
+    // MARK: - Toast 覆盖层（独立动画作用域）
+
+    @ViewBuilder
+    var toastOverlay: some View {
+        if let toast {
+            ToastView(data: toast)
+                .padding(.bottom, 20)
+                .transition(.move(edge: .bottom).combined(with: .opacity))
+                .animation(.easeInOut(duration: 0.2), value: toast.id)
+        }
+    }
+
+    // MARK: - 工具栏（固定尺寸，避免语言切换或刷新时布局跳动）
 
     var toolbar: some View {
         HStack(spacing: 10) {
@@ -91,65 +98,80 @@ struct ContentView: View {
             .background(.background.secondary)
             .clipShape(RoundedRectangle(cornerRadius: 8))
 
-            // 统计
+            // 统计（固定最小宽度避免跳动）
             Text("\(filteredItems.count) / \(allItems.count) \(appLocale.s("stat.suffix"))")
                 .font(.caption)
                 .foregroundStyle(.secondary)
+                .frame(minWidth: 80)
 
             Spacer()
 
-            // 语言切换
-            Button(action: {
-                appLocale.toggle()
-            }) {
+            // 语言切换（固定宽度）
+            Button(action: { appLocale.toggle() }) {
                 Text(appLocale.switchLabel)
                     .font(.system(size: 13, weight: .medium))
-                    .frame(width: 28)
+                    .frame(width: 28, height: 16)
             }
             .buttonStyle(.bordered)
             .help("切换语言 / Switch Language")
 
-            // 批量替换
+            // 批量替换（固定宽度避免中英文宽度不同）
             Button {
                 showBatchSheet = true
             } label: {
-                Label(LocalizedStringKey("btn.batchReplace"), systemImage: "arrow.2.squarepath")
-            }
-            .buttonStyle(.bordered)
-
-            // 刷新
-            Button {
-                Task { await refresh() }
-            } label: {
-                if refreshing {
-                    ProgressView().progressViewStyle(.circular).scaleEffect(0.7)
-                } else {
-                    Label(LocalizedStringKey("btn.refresh"), systemImage: "arrow.clockwise")
+                Label {
+                    Text(appLocale.s("btn.batchReplace"))
+                } icon: {
+                    Image(systemName: "arrow.2.squarepath")
                 }
             }
             .buttonStyle(.bordered)
+            .frame(width: 120)
+
+            // 刷新（固定宽度，ProgressView 和 Label 共用同一尺寸）
+            Button {
+                Task { await refresh() }
+            } label: {
+                // 用 ZStack 保持按钮大小不变
+                ZStack {
+                    Label {
+                        Text(appLocale.s("btn.refresh"))
+                    } icon: {
+                        Image(systemName: "arrow.clockwise")
+                    }
+                    .opacity(refreshing ? 0 : 1)
+
+                    ProgressView()
+                        .progressViewStyle(.circular)
+                        .scaleEffect(0.7)
+                        .opacity(refreshing ? 1 : 0)
+                }
+            }
+            .buttonStyle(.bordered)
+            .frame(width: 80)
             .disabled(refreshing)
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 10)
     }
 
-    // MARK: - 表格（带行选中）
+    // MARK: - 表格（带行选中 + 固定列宽）
 
     var tableView: some View {
         Table(filteredItems, selection: $selectedIds) {
             TableColumn(LocalizedStringKey("table.ext")) { item in
                 ExtBadgeView(ext: item.ext)
             }
-            .width(min: 80, ideal: 90)
+            .width(min: 80, ideal: 90, max: 100)
 
             TableColumn(LocalizedStringKey("table.uti")) { item in
                 Text(item.uti)
                     .font(.caption)
                     .foregroundStyle(.secondary)
                     .help(item.uti)
+                    .lineLimit(1)
             }
-            .width(min: 180, ideal: 240)
+            .width(min: 160, ideal: 220, max: 320)
 
             TableColumn(LocalizedStringKey("table.defaultApp")) { item in
                 if let app = item.defaultApp {
@@ -165,27 +187,29 @@ struct ContentView: View {
                         .italic()
                 }
             }
+            .width(min: 120, ideal: 200)
 
             TableColumn(LocalizedStringKey("table.availableCount")) { item in
                 Text("\(item.availableApps.count)")
                     .foregroundStyle(.secondary)
                     .font(.caption)
+                    .frame(maxWidth: .infinity, alignment: .center)
             }
-            .width(60)
+            .width(50)
 
             TableColumn(LocalizedStringKey("table.action")) { item in
                 Button {
                     selectedItem = item
                 } label: {
-                    Text(LocalizedStringKey("btn.change"))
-                        .frame(minWidth: 44)
+                    Text(appLocale.s("btn.change"))
+                        .frame(width: 44)
                 }
                 .buttonStyle(.borderedProminent)
                 .tint(item.availableApps.isEmpty ? .gray : .blue)
                 .controlSize(.small)
                 .disabled(item.availableApps.isEmpty)
             }
-            .width(70)
+            .width(64)
         }
     }
 
@@ -250,7 +274,9 @@ struct ContentView: View {
     func showToast(_ message: String, type: ToastData.ToastType) {
         toast = ToastData(message: message, type: type)
         DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-            toast = nil
+            withAnimation(.easeInOut(duration: 0.2)) {
+                toast = nil
+            }
         }
     }
 }
@@ -289,11 +315,15 @@ struct ExtBadgeView: View {
 
 // MARK: - Toast 数据 & 视图
 
-struct ToastData: Identifiable {
+struct ToastData: Identifiable, Equatable {
     enum ToastType { case success, error }
     let id = UUID()
     let message: String
     let type: ToastType
+
+    static func == (lhs: ToastData, rhs: ToastData) -> Bool {
+        lhs.id == rhs.id
+    }
 }
 
 struct ToastView: View {
