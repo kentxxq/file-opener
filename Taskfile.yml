@@ -6,6 +6,8 @@ vars:
   BUILD_DIR: FileOpener/build
   RELEASE_DIR: FileOpener/release
   APP_PATH: "{{.RELEASE_DIR}}/{{.PROJECT_NAME}}.app"
+  DMG_NAME: "{{.PROJECT_NAME}}-Installer.dmg"
+  DMG_PATH: "{{.RELEASE_DIR}}/{{.DMG_NAME}}"
 
 tasks:
   default:
@@ -36,15 +38,44 @@ tasks:
     cmds:
       - open {{.BUILD_DIR}}/sym/Release/{{.PROJECT_NAME}}.app
 
+  dmg:
+    desc: 将 .app 打包为 .dmg 安装镜像
+    deps: [build, check-create-dmg]
+    cmds:
+      - mkdir -p {{.RELEASE_DIR}}
+      - rm -f {{.DMG_PATH}}
+      - |
+        rm -rf {{.BUILD_DIR}}/dmg_stage
+        mkdir -p {{.BUILD_DIR}}/dmg_stage
+        cp -R {{.BUILD_DIR}}/sym/Release/{{.PROJECT_NAME}}.app {{.BUILD_DIR}}/dmg_stage/
+        create-dmg \
+          --volname "{{.PROJECT_NAME}} Installer" \
+          --window-pos 200 120 \
+          --window-size 600 400 \
+          --icon-size 100 \
+          --icon "{{.PROJECT_NAME}}.app" 175 190 \
+          --hide-extension "{{.PROJECT_NAME}}.app" \
+          --app-drop-link 425 185 \
+          "{{.DMG_PATH}}" \
+          "{{.BUILD_DIR}}/dmg_stage/"
+        rm -rf {{.BUILD_DIR}}/dmg_stage
+      - echo "DMG 已生成：{{.DMG_PATH}}"
+
+  check-create-dmg:
+    internal: true
+    cmds:
+      - command -v create-dmg >/dev/null 2>&1 || (echo "错误：未安装 create-dmg。请运行 'brew install create-dmg' 安装。" && exit 1)
+
   release:
-    desc: 清理并打包到 release 目录
+    desc: 清理、构建并打包所有产物 (.app 和 .dmg)
     deps: [clean]
     cmds:
       - task: build
       - mkdir -p {{.RELEASE_DIR}}
       - cp -R {{.BUILD_DIR}}/sym/Release/{{.PROJECT_NAME}}.app {{.RELEASE_DIR}}/
-      - echo "打包完成！构建产物在 {{.APP_PATH}}"
-      - du -sh {{.APP_PATH}}
+      - task: dmg
+      - echo "打包完成！构建产物在 {{.RELEASE_DIR}}"
+      - du -sh {{.RELEASE_DIR}}/*
 
   clean:
     desc: 清理构建缓存和发布目录

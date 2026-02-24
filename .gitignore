@@ -1,13 +1,19 @@
 # OS
 .DS_Store
 Thumbs.db
+*.icloud
 
 # Xcode build artifacts
 FileOpener/build/
+FileOpener/release/
 *.xcuserstate
 xcuserdata/
 *.xcworkspace/xcuserdata/
 DerivedData/
+
+# Project files
+*.xcodeproj/project.xcworkspace
+*.xcodeproj/xcuserdata
 
 # Archive
 *.xcarchive
@@ -15,3 +21,7 @@ DerivedData/
 # IDE
 .idea/
 *.sw?
+.vscode/
+
+# Build scripts
+Taskfile.yml.local
