@@ -45,32 +45,53 @@ struct ContentView: View {
         .overlay(alignment: .bottom) {
             toastOverlay
         }
-        .overlay {
-            // 批量替换弹窗（点击半透明背景关闭）
-            if showBatchSheet {
-                Color.black.opacity(0.3)
-                    .ignoresSafeArea()
-                    .onTapGesture { showBatchSheet = false }
-
-                BatchReplaceSheet(allItems: allItems, onComplete: { success, fail in
-                    showToast(appLocale.s("toast.batchSuccess", success, fail),
-                              type: fail == 0 ? .success : .error)
-                    Task { await loadData() }
-                    showBatchSheet = false
-                }, onDismiss: {
-                    showBatchSheet = false
-                })
-                .environmentObject(service)
-                .environmentObject(appLocale)
-                .shadow(color: .black.opacity(0.3), radius: 20)
-                .transition(.opacity.combined(with: .scale(scale: 0.95)))
-            }
+        .overlay(alignment: .center) {
+            customSheetsOverlay
         }
-        .animation(.easeInOut(duration: 0.15), value: showBatchSheet)
         .task { await loadData() }
-        .sheet(item: $selectedItem) { item in
-            ChangeAppSheet(item: item) { app in
-                applyChange(ext: item.ext, app: app)
+    }
+
+    // MARK: - 自定义弹窗层
+    
+    @ViewBuilder
+    var customSheetsOverlay: some View {
+        ZStack {
+            if showBatchSheet || selectedItem != nil {
+                Color.black.opacity(0.4)
+                    .ignoresSafeArea()
+                    .onTapGesture {
+                        withAnimation(.easeOut(duration: 0.15)) {
+                            showBatchSheet = false
+                            selectedItem = nil
+                        }
+                    }
+                    .transition(.opacity)
+
+                if showBatchSheet {
+                    BatchReplaceSheet(allItems: allItems, onComplete: { success, fail in
+                        showToast(appLocale.s("toast.batchSuccess", success, fail),
+                                  type: fail == 0 ? .success : .error)
+                        Task { await loadData() }
+                    }, onClose: {
+                        withAnimation(.easeOut(duration: 0.15)) { showBatchSheet = false }
+                    })
+                    .background(Color(NSColor.windowBackgroundColor))
+                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                    .shadow(color: .black.opacity(0.3), radius: 20, y: 10)
+                    .transition(.scale(scale: 0.95).combined(with: .opacity))
+                    .environmentObject(service)
+                    .environmentObject(appLocale)
+                } else if let item = selectedItem {
+                    ChangeAppSheet(item: item, onSelect: { app in
+                        applyChange(ext: item.ext, app: app)
+                    }, onClose: {
+                        withAnimation(.easeOut(duration: 0.15)) { selectedItem = nil }
+                    })
+                    .background(Color(NSColor.windowBackgroundColor))
+                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                    .shadow(color: .black.opacity(0.3), radius: 20, y: 10)
+                    .transition(.scale(scale: 0.95).combined(with: .opacity))
+                }
             }
         }
     }
@@ -122,7 +143,7 @@ struct ContentView: View {
             HStack(spacing: 8) {
                 // 批量替换
                 Button {
-                    showBatchSheet = true
+                    withAnimation(.easeOut(duration: 0.15)) { showBatchSheet = true }
                 } label: {
                     Label(appLocale.s("btn.batchReplace"), systemImage: "arrow.2.squarepath")
                         .fixedSize()
@@ -208,7 +229,7 @@ struct ContentView: View {
 
             TableColumn(LocalizedStringKey("table.action")) { item in
                 Button {
-                    selectedItem = item
+                    withAnimation(.easeOut(duration: 0.15)) { selectedItem = item }
                 } label: {
                     Text(appLocale.s("btn.change"))
                         .frame(width: 44)

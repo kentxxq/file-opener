@@ -5,7 +5,7 @@ import SwiftUI
 struct ChangeAppSheet: View {
     let item: FileAssocItem
     let onSelect: (AppInfo) -> Void
-    @Environment(\.dismiss) private var dismiss
+    let onClose: () -> Void
 
     var body: some View {
         VStack(spacing: 0) {
@@ -26,7 +26,7 @@ struct ChangeAppSheet: View {
                         .foregroundStyle(.secondary)
                 }
                 Spacer()
-                Button(action: { dismiss() }) {
+                Button(action: { onClose() }) {
                     Image(systemName: "xmark.circle.fill")
                         .font(.title2)
                         .foregroundStyle(.secondary)
@@ -46,7 +46,7 @@ struct ChangeAppSheet: View {
                             isCurrent: item.defaultApp?.bundleId == app.bundleId
                         ) {
                             onSelect(app)
-                            dismiss()
+                            onClose()
                         }
                     }
                 }
@@ -58,7 +58,7 @@ struct ChangeAppSheet: View {
             // 底部
             HStack {
                 Spacer()
-                Button(LocalizedStringKey("btn.close")) { dismiss() }
+                Button(LocalizedStringKey("btn.close")) { onClose() }
                     .keyboardShortcut(.escape)
             }
             .padding()
