@@ -17,7 +17,7 @@ struct ChangeAppSheet: View {
                             .font(.headline)
                         Text(".\(item.ext)")
                             .font(.headline)
-                            .foregroundStyle(.accent)
+                            .foregroundStyle(Color.accentColor)
                         Text(LocalizedStringKey("modal.titleSuffix"))
                             .font(.headline)
                     }
@@ -97,8 +97,8 @@ struct AppOptionRow: View {
                         .font(.caption)
                         .padding(.horizontal, 8)
                         .padding(.vertical, 3)
-                        .background(.accent.opacity(0.15))
-                        .foregroundStyle(.accent)
+                        .background(Color.accentColor.opacity(0.15))
+                        .foregroundStyle(Color.accentColor)
                         .clipShape(Capsule())
                 }
             }

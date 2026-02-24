@@ -4,12 +4,11 @@ import AppKit
 
 // MARK: - 文件关联服务（内联原 helper 逻辑）
 
-@MainActor
 class FileAssocService: ObservableObject {
 
     // MARK: - 公开方法
 
-    /// 列出所有已知后缀的文件关联信息
+    /// 列出所有已知后缀的文件关联信息（在后台线程执行，返回结果）
     func list() async -> [FileAssocItem] {
         await Task.detached(priority: .userInitiated) {
             Self.buildList()

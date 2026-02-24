@@ -147,7 +147,7 @@ struct BatchReplaceSheet: View {
                         .font(.subheadline)
                 }
                 .buttonStyle(.plain)
-                .foregroundStyle(.accent)
+                .foregroundStyle(Color.accentColor)
 
                 Spacer()
             }
