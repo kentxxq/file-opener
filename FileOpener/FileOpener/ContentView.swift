@@ -92,6 +92,10 @@ struct ContentView: View {
                 }
             }
         }
+        .onExitCommand {
+            showBatchSheet = false
+            selectedItem = nil
+        }
     }
 
     // MARK: - Toast 覆盖层（独立动画作用域）
