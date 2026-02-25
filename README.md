@@ -77,6 +77,20 @@ FileOpener/
 - `main`: 当前主分支，存放 Swift/SwiftUI 原生代码。
 - `electron`: 旧的分支，保存了原本基于 Electron + Vue 3 的实现代码，供参考。
 
+## TODO
+
+- [ ] **集成 Sparkle 实现自动更新**
+  - [Sparkle](https://sparkle-project.org/) 是 macOS 上最流行的开源自动更新框架（VS Code、iTerm2 等均在使用）
+  - **更新体验**：用户点击"安装更新" → App 自动关闭 → 替换 .app → 重新打开，无需手动拖拽 DMG
+  - **实施步骤**：
+    1. 通过 Swift Package Manager 添加 `https://github.com/sparkle-project/Sparkle` 依赖
+    2. 在 `Info.plist` 中配置 `SUFeedURL`（指向托管的 `appcast.xml` 地址）
+    3. 在 `FileOpenerApp.swift` 中初始化 `SPUStandardUpdaterController`
+    4. 在工具栏或菜单中添加"检查更新"按钮，调用 `updaterController.checkForUpdates(nil)`
+    5. 发布时打包 `.zip`（Sparkle 更新用）+ `.dmg`（首次安装用），上传到 GitHub Releases
+    6. 维护 `appcast.xml` 描述版本号、下载地址、更新说明（可用 Sparkle 自带的 `generate_appcast` 工具自动生成）
+  - **备注**：未签名的 App 也可使用 Sparkle，需关闭签名验证；有签名则更安全
+
 ## 许可证
 
 MIT License
