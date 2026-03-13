@@ -79,6 +79,11 @@ FileOpener/
 
 ## TODO
 
+- [ ] **打破“硬编码”的后缀列表**
+  - **现状**：目前应用支持的后缀名是硬编码在 `FileAssocService.swift` 的 `knownExtensions()` 中的。
+  - **改进**：
+    1. **动态扫描**：调用系统 API 扫描当前系统上所有已注册的文件后缀。
+    2. **手动添加**：允许用户输入列表中不存在的后缀名进行查询和管理。
 - [ ] **集成 Sparkle 实现自动更新**
   - [Sparkle](https://sparkle-project.org/) 是 macOS 上最流行的开源自动更新框架（VS Code、iTerm2 等均在使用）
   - **更新体验**：用户点击"安装更新" → App 自动关闭 → 替换 .app → 重新打开，无需手动拖拽 DMG
