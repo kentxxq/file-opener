@@ -37,15 +37,24 @@ jobs:
           APP_PATH="FileOpener/build/sym/Release/FileOpener.app"
           DMG_NAME="FileOpener.dmg"
           
-          # 创建一个临时打包目录
+          # 安装 create-dmg，用于创建带有漂亮拖拽界面的 DMG
+          brew install create-dmg
+          
+          # 创建一个只存放应用本身的中转目录
           mkdir -p dmg_staging
           cp -R "$APP_PATH" dmg_staging/
           
-          # 在打包目录中创建一个指向 /Applications 的快捷方式
-          ln -s /Applications dmg_staging/Applications
-          
-          # 从临时目录制作 DMG，这样打开 DMG 后就会看到 App 和 Applications 快捷方式
-          hdiutil create -volname "FileOpener" -srcfolder dmg_staging -ov -format UDZO "$DMG_NAME"
+          # 使用 create-dmg 创建，它可以自动设置内部的 Application 快捷方式和图标位置
+          create-dmg \
+            --volname "FileOpener" \
+            --window-pos 200 120 \
+            --window-size 600 400 \
+            --icon-size 128 \
+            --icon "FileOpener.app" 150 190 \
+            --hide-extension "FileOpener.app" \
+            --app-drop-link 450 190 \
+            "$DMG_NAME" \
+            "dmg_staging/"
 
       - name: 删除旧的 Latest Release / Delete existing release and tag
         env:
