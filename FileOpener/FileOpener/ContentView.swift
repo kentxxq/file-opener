@@ -48,7 +48,20 @@ struct ContentView: View {
         .overlay(alignment: .center) {
             customSheetsOverlay
         }
-        .task { await loadData() }
+        .task { 
+            await loadData()
+            if let ext = AppState.pendingExtension {
+                searchQuery = ext
+                AppState.pendingExtension = nil
+            }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("ManageExtension"))) { notif in
+            if let ext = notif.object as? String {
+                searchQuery = ext
+                AppState.pendingExtension = nil
+                NSApp.activate(ignoringOtherApps: true)
+            }
+        }
     }
 
     // MARK: - 自定义弹窗层

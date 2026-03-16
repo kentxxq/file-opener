@@ -26,5 +26,30 @@
     <string>Copyright 2025 kentxxq. MIT License.</string>
     <key>NSPrincipalClass</key>
     <string>NSApplication</string>
+    <key>NSServices</key>
+    <array>
+        <dict>
+            <key>NSMenuItem</key>
+            <dict>
+                <key>default</key>
+                <string>Manage File Association / 管理文件关联</string>
+            </dict>
+            <key>NSMessage</key>
+            <string>handleManageAssociation</string>
+            <key>NSPortName</key>
+            <string>FileOpener</string>
+            <key>NSSendFileTypes</key>
+            <array>
+                <string>public.item</string>
+                <string>public.content</string>
+                <string>public.data</string>
+            </array>
+            <key>NSRequiredContext</key>
+            <dict>
+                <key>NSTextContent</key>
+                <string>FilePath</string>
+            </dict>
+        </dict>
+    </array>
 </dict>
 </plist>
