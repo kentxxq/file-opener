@@ -1,0 +1,7 @@
+/* 
+  InfoPlist.strings
+  FileOpener
+*/
+"Manage File Association" = "管理文件关联";
+"CFBundleDisplayName" = "File Opener";
+"CFBundleName" = "File Opener";

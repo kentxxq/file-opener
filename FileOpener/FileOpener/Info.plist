@@ -32,7 +32,7 @@
             <key>NSMenuItem</key>
             <dict>
                 <key>default</key>
-                <string>Manage File Association / 管理文件关联</string>
+                <string>Manage File Association</string>
             </dict>
             <key>NSMessage</key>
             <string>handleManageAssociation</string>
