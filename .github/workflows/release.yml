@@ -37,8 +37,15 @@ jobs:
           APP_PATH="FileOpener/build/sym/Release/FileOpener.app"
           DMG_NAME="FileOpener.dmg"
           
-          # 采用 mvp 原则，直接使用系统自带的 hdiutil 打包
-          hdiutil create -volname "FileOpener" -srcfolder "$APP_PATH" -ov -format UDZO "$DMG_NAME"
+          # 创建一个临时打包目录
+          mkdir -p dmg_staging
+          cp -R "$APP_PATH" dmg_staging/
+          
+          # 在打包目录中创建一个指向 /Applications 的快捷方式
+          ln -s /Applications dmg_staging/Applications
+          
+          # 从临时目录制作 DMG，这样打开 DMG 后就会看到 App 和 Applications 快捷方式
+          hdiutil create -volname "FileOpener" -srcfolder dmg_staging -ov -format UDZO "$DMG_NAME"
 
       - name: 删除旧的 Latest Release / Delete existing release and tag
         env:
