@@ -1,0 +1,58 @@
+name: Release Latest
+
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - 'README.md'
+      - '.gitignore'
+      - '.task/**'
+      - 'Taskfile.yml'
+
+jobs:
+  build-and-release:
+    runs-on: macos-latest
+    permissions:
+      contents: write
+    
+    steps:
+      - name: 切出代码 / Checkout Code
+        uses: actions/checkout@v4
+
+      - name: 构建应用 / Build Application
+        run: |
+          cd FileOpener
+          xcodebuild -project FileOpener.xcodeproj \
+            -scheme FileOpener \
+            -configuration Release \
+            -destination "platform=macOS" \
+            OBJROOT="$(pwd)/build/obj" \
+            SYMROOT="$(pwd)/build/sym" \
+            CODE_SIGNING_ALLOWED=NO \
+            build
+
+      - name: 打包 DMG / Create DMG
+        run: |
+          APP_PATH="FileOpener/build/sym/Release/FileOpener.app"
+          DMG_NAME="FileOpener.dmg"
+          
+          # 采用 mvp 原则，直接使用系统自带的 hdiutil 打包
+          hdiutil create -volname "FileOpener" -srcfolder "$APP_PATH" -ov -format UDZO "$DMG_NAME"
+
+      - name: 删除旧的 Latest Release / Delete existing release and tag
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release delete latest --cleanup-tag -y || echo "Release not found, skipping..."
+
+      - name: 发布新的 Latest Release / Create new Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: latest
+          name: Latest Release
+          target_commitish: ${{ github.sha }}
+          body: "通过 GitHub Actions 自动构建的最新版本 (Latest Release built automatically).\n\n包含最新 commit: ${{ github.sha }}"
+          files: FileOpener.dmg
+          draft: false
+          prerelease: false
