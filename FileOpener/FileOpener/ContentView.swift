@@ -16,6 +16,10 @@ struct ContentView: View {
     // 弹窗状态
     @State private var selectedItem: FileAssocItem? = nil
     @State private var showBatchSheet = false
+    @State private var showAddExtensionAlert = false
+    @State private var newExtension = ""
+    @State private var extensionToDelete: FileAssocItem? = nil
+    @State private var showDeleteAlert = false
 
     // 过滤后列表
     var filteredItems: [FileAssocItem] {
@@ -47,6 +51,38 @@ struct ContentView: View {
         }
         .overlay(alignment: .center) {
             customSheetsOverlay
+        }
+        .alert(LocalizedStringKey("alert.addExt.title"), isPresented: $showAddExtensionAlert) {
+            TextField(LocalizedStringKey("alert.addExt.placeholder"), text: $newExtension)
+            Button(LocalizedStringKey("btn.close"), role: .cancel) {
+                newExtension = ""
+            }
+            Button(LocalizedStringKey("btn.add")) {
+                let ext = newExtension.trimmingCharacters(in: .whitespaces)
+                if !ext.isEmpty {
+                    service.addCustomExtension(ext)
+                    searchQuery = ext // update search query
+                    Task { await loadData() }
+                }
+                newExtension = ""
+            }
+        } message: {
+            Text(LocalizedStringKey("alert.addExt.msg"))
+        }
+        .alert(LocalizedStringKey("alert.deleteExt.title"), isPresented: $showDeleteAlert, presenting: extensionToDelete) { item in
+            Button(LocalizedStringKey("btn.delete"), role: .destructive) {
+                service.removeCustomExtension(item.ext)
+                if let idx = allItems.firstIndex(where: { $0.ext == item.ext }) {
+                    allItems.remove(at: idx)
+                }
+                showToast(appLocale.s("toast.deleteSuccess", item.ext), type: .success)
+                extensionToDelete = nil
+            }
+            Button(LocalizedStringKey("btn.close"), role: .cancel) {
+                extensionToDelete = nil
+            }
+        } message: { item in
+            Text(appLocale.s("alert.deleteExt.msg", item.ext))
         }
         .task { 
             await loadData()
@@ -161,6 +197,14 @@ struct ContentView: View {
 
             // ── 右侧：操作按钮组 ──
             HStack(spacing: 8) {
+                // 添加后缀
+                Button {
+                    showAddExtensionAlert = true
+                } label: {
+                    Label(appLocale.s("btn.addExt"), systemImage: "plus")
+                        .fixedSize()
+                }
+
                 // 批量替换
                 Button {
                     showBatchSheet = true
@@ -248,18 +292,32 @@ struct ContentView: View {
             .width(70)
 
             TableColumn(LocalizedStringKey("table.action")) { item in
-                Button {
-                    selectedItem = item
-                } label: {
-                    Text(appLocale.s("btn.change"))
-                        .frame(width: 44)
+                HStack(spacing: 6) {
+                    Button {
+                        selectedItem = item
+                    } label: {
+                        Text(appLocale.s("btn.change"))
+                            .frame(width: 44)
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .tint(.blue)
+                    .controlSize(.small)
+
+                    if item.isCustom {
+                        Button {
+                            extensionToDelete = item
+                            showDeleteAlert = true
+                        } label: {
+                            Image(systemName: "trash")
+                        }
+                        .buttonStyle(.bordered)
+                        .tint(.red)
+                        .controlSize(.small)
+                        .help(LocalizedStringKey("btn.delete"))
+                    }
                 }
-                .buttonStyle(.borderedProminent)
-                .tint(item.availableApps.isEmpty ? .gray : .blue)
-                .controlSize(.small)
-                .disabled(item.availableApps.isEmpty)
             }
-            .width(64)
+            .width(min: 64, ideal: 100)
         }
     }
 
@@ -310,7 +368,8 @@ struct ContentView: View {
                     ext: allItems[idx].ext,
                     uti: allItems[idx].uti,
                     defaultApp: app,
-                    availableApps: allItems[idx].availableApps
+                    availableApps: allItems[idx].availableApps,
+                    isCustom: allItems[idx].isCustom
                 )
             }
             showToast(appLocale.s("toast.setSuccess", ext, app.name), type: .success)

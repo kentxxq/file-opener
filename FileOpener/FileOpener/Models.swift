@@ -14,6 +14,7 @@ struct FileAssocItem: Identifiable {
     let uti: String
     var defaultApp: AppInfo?
     let availableApps: [AppInfo]
+    let isCustom: Bool
 }
 
 struct SetResult {

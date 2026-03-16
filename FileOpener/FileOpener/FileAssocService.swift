@@ -8,6 +8,26 @@ class FileAssocService: ObservableObject {
 
     // MARK: - 公开方法
 
+    /// 添加自定义后缀名
+    func addCustomExtension(_ ext: String) {
+        let safeExt = ext.filter { $0.isLetter || $0.isNumber }.lowercased()
+        guard !safeExt.isEmpty else { return }
+        var customExts = UserDefaults.standard.stringArray(forKey: "CustomExtensions") ?? []
+        if !customExts.contains(safeExt) {
+            customExts.append(safeExt)
+            UserDefaults.standard.set(customExts, forKey: "CustomExtensions")
+        }
+    }
+
+    /// 删除自定义后缀名
+    func removeCustomExtension(_ ext: String) {
+        var customExts = UserDefaults.standard.stringArray(forKey: "CustomExtensions") ?? []
+        if let idx = customExts.firstIndex(of: ext.lowercased()) {
+            customExts.remove(at: idx)
+            UserDefaults.standard.set(customExts, forKey: "CustomExtensions")
+        }
+    }
+
     /// 列出所有已知后缀的文件关联信息（在后台线程执行，返回结果）
     func list() async -> [FileAssocItem] {
         await Task.detached(priority: .userInitiated) {
@@ -40,11 +60,20 @@ class FileAssocService: ObservableObject {
     // MARK: - 内部实现
 
     private static func buildList() -> [FileAssocItem] {
-        let extensions = knownExtensions()
+        let customExtsArray = UserDefaults.standard.stringArray(forKey: "CustomExtensions") ?? []
+        let customExts = Set(customExtsArray)
+        
+        var extensions = Set(knownExtensions())
+        extensions.formUnion(scanDynamicExtensions())
+        extensions.formUnion(customExts)
+
         var items: [FileAssocItem] = []
         for ext in extensions {
             guard let uti = getUTI(for: ext) else { continue }
-            if uti.hasPrefix("dyn.") { continue }
+            // 如果是系统动态生成的 UTI，且不是用户手动添加的后缀，则跳过
+            if uti.hasPrefix("dyn.") && !customExts.contains(ext) { 
+                continue 
+            }
 
             let defaultBundleId = getDefaultAppBundleId(for: uti)
             let allBundleIds = getAllAppBundleIds(for: uti)
@@ -66,10 +95,37 @@ class FileAssocService: ObservableObject {
                 ext: ext,
                 uti: uti,
                 defaultApp: defaultApp,
-                availableApps: availableApps
+                availableApps: availableApps,
+                isCustom: customExts.contains(ext) && !knownExtensions().contains(ext)
             ))
         }
         return items.sorted { $0.ext.lowercased() < $1.ext.lowercased() }
+    }
+
+    private static func scanDynamicExtensions() -> Set<String> {
+        var exts = Set<String>()
+        let fm = FileManager.default
+        let appPaths = ["/Applications", "/System/Applications", "/System/Applications/Utilities", NSHomeDirectory() + "/Applications"]
+        
+        for dir in appPaths {
+            guard let items = try? fm.contentsOfDirectory(atPath: dir) else { continue }
+            for item in items where item.hasSuffix(".app") {
+                let plistPath = (dir as NSString).appendingPathComponent(item).appending("/Contents/Info.plist")
+                guard let dict = NSDictionary(contentsOfFile: plistPath) else { continue }
+                if let docTypes = dict["CFBundleDocumentTypes"] as? [[String: Any]] {
+                    for docType in docTypes {
+                        if let extensions = docType["CFBundleTypeExtensions"] as? [String] {
+                            for ext in extensions {
+                                if !ext.isEmpty && ext.count < 15 && ext.rangeOfCharacter(from: CharacterSet.alphanumerics.inverted) == nil {
+                                    exts.insert(ext.lowercased())
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return exts
     }
 
     private static func getUTI(for ext: String) -> String? {

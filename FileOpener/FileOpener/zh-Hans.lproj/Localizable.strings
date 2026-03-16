@@ -18,6 +18,9 @@
 "modal.titleSuffix" = "的默认应用";
 "modal.utiLabel" = "系统类型标识";
 "modal.currentTag" = "当前";
+"modal.chooseOther" = "选择其他应用...";
+"modal.chooseOtherDesc" = "在访达中手动选择一个应用程序";
+"modal.noApps" = "未找到推荐的关联应用";
 "loading.text" = "正在加载文件关联数据...";
 "empty.text" = "没有找到匹配的文件后缀";
 "toast.refreshed" = "数据已刷新";
@@ -35,3 +38,12 @@
 "batch.noApps" = "没有可用的替换目标";
 "batch.processing" = "正在批量替换...";
 "batch.back" = "返回";
+"btn.addExt" = "添加后缀";
+"btn.add" = "添加";
+"alert.addExt.title" = "添加文件后缀";
+"alert.addExt.placeholder" = "例如 xyz";
+"alert.addExt.msg" = "输入一个后缀名，将其手动添加到列表中。";
+"btn.delete" = "删除";
+"alert.deleteExt.title" = "删除自定义后缀";
+"alert.deleteExt.msg" = "确定要将 .%@ 从列表中移除吗？";
+"toast.deleteSuccess" = "已移除 .%@";

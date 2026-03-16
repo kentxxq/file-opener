@@ -1,4 +1,5 @@
 import SwiftUI
+import UniformTypeIdentifiers
 
 // MARK: - 修改默认应用弹窗
 
@@ -40,13 +41,45 @@ struct ChangeAppSheet: View {
             // 应用列表
             ScrollView {
                 LazyVStack(spacing: 6) {
-                    ForEach(item.availableApps) { app in
-                        AppOptionRow(
-                            app: app,
-                            isCurrent: item.defaultApp?.bundleId == app.bundleId
-                        ) {
-                            onSelect(app)
-                            onClose()
+                    // 自定义选择应用按钮
+                    Button {
+                        selectCustomApp()
+                    } label: {
+                        HStack {
+                            Image(systemName: "folder.badge.plus")
+                                .font(.title2)
+                                .frame(width: 32, height: 32)
+                                .foregroundStyle(.blue)
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(LocalizedStringKey("modal.chooseOther"))
+                                    .font(.body)
+                                    .foregroundColor(.primary)
+                                Text(LocalizedStringKey("modal.chooseOtherDesc"))
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                            }
+                            Spacer()
+                        }
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 8)
+                        .background(Color.blue.opacity(0.08))
+                        .clipShape(RoundedRectangle(cornerRadius: 8))
+                    }
+                    .buttonStyle(.plain)
+
+                    if item.availableApps.isEmpty {
+                        Text(LocalizedStringKey("modal.noApps"))
+                            .foregroundColor(.secondary)
+                            .padding(.top, 20)
+                    } else {
+                        ForEach(item.availableApps) { app in
+                            AppOptionRow(
+                                app: app,
+                                isCurrent: item.defaultApp?.bundleId == app.bundleId
+                            ) {
+                                onSelect(app)
+                                onClose()
+                            }
                         }
                     }
                 }
@@ -64,6 +97,24 @@ struct ChangeAppSheet: View {
             .padding()
         }
         .frame(width: 420, height: 440)
+    }
+
+    private func selectCustomApp() {
+        let panel = NSOpenPanel()
+        panel.canChooseFiles = true
+        panel.canChooseDirectories = false
+        panel.allowsMultipleSelection = false
+        panel.allowedContentTypes = [UTType.application]
+        panel.directoryURL = URL(fileURLWithPath: "/Applications")
+        
+        if panel.runModal() == .OK, let url = panel.url {
+            if let bundle = Bundle(url: url), let bundleId = bundle.bundleIdentifier {
+                let appName = FileManager.default.displayName(atPath: url.path).replacingOccurrences(of: ".app", with: "")
+                let appInfo = AppInfo(name: appName, bundleId: bundleId)
+                onSelect(appInfo)
+                onClose()
+            }
+        }
     }
 }
 

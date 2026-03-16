@@ -18,6 +18,9 @@
 "modal.titleSuffix" = "";
 "modal.utiLabel" = "Type Identifier";
 "modal.currentTag" = "Current";
+"modal.chooseOther" = "Choose Other App...";
+"modal.chooseOtherDesc" = "Select an application from Finder";
+"modal.noApps" = "No recommended installed apps found.";
 "loading.text" = "Loading file associations...";
 "empty.text" = "No matching file extensions found";
 "toast.refreshed" = "Data refreshed";
@@ -35,3 +38,12 @@
 "batch.noApps" = "No available target apps";
 "batch.processing" = "Replacing...";
 "batch.back" = "Back";
+"btn.addExt" = "Add Format";
+"btn.add" = "Add";
+"alert.addExt.title" = "Add File Extension";
+"alert.addExt.placeholder" = "e.g., xyz";
+"alert.addExt.msg" = "Enter a file extension to manually add it to the list.";
+"btn.delete" = "Delete";
+"alert.deleteExt.title" = "Delete Custom Extension";
+"alert.deleteExt.msg" = "Are you sure you want to remove .%@ from the list?";
+"toast.deleteSuccess" = "Removed .%@";
