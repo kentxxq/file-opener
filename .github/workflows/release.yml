@@ -46,13 +46,13 @@ jobs:
           
           # 使用 create-dmg 创建，它可以自动设置内部的 Application 快捷方式和图标位置
           create-dmg \
-            --volname "FileOpener" \
+            --volname "FileOpener Installer" \
             --window-pos 200 120 \
             --window-size 600 400 \
-            --icon-size 128 \
-            --icon "FileOpener.app" 150 190 \
+            --icon-size 100 \
+            --icon "FileOpener.app" 175 190 \
             --hide-extension "FileOpener.app" \
-            --app-drop-link 450 190 \
+            --app-drop-link 425 185 \
             "$DMG_NAME" \
             "dmg_staging/"
 

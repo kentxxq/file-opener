@@ -95,10 +95,6 @@ FileOpener/
     5. 发布时打包 `.zip`（Sparkle 更新用）+ `.dmg`（首次安装用），上传到 GitHub Releases
     6. 维护 `appcast.xml` 描述版本号、下载地址、更新说明（可用 Sparkle 自带的 `generate_appcast` 工具自动生成）
   - **备注**：未签名的 App 也可使用 Sparkle，需关闭签名验证；有签名则更安全
-- [x] **CI/CD 自动化发布**
-  - 使用 GitHub Actions 自动构建 Release、生成 DMG 并发布到 GitHub Releases。
-- [ ] **右键扩展助手 (Finder Extension / Quick Action)**
-  - 支持在 Finder 中右键文件 -> 服务 -> 使用 FileOpener 管理关联，无缝融入系统体验。
 - [ ] **更优雅的错误与提示反馈**
   - 优化 LaunchServices API 失败时的静默无响应，通过 Alert 或 Toast 及时提示用户权限不足或失败原因。
 
