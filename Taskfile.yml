@@ -26,11 +26,6 @@ tasks:
           SYMROOT="$(pwd)/{{.BUILD_DIR}}/sym" \
           CODE_SIGNING_ALLOWED=NO \
           build
-    sources:
-      - FileOpener/FileOpener/**/*.swift
-      - FileOpener/FileOpener/Info.plist
-    generates:
-      - "{{.BUILD_DIR}}/sym/Release/{{.PROJECT_NAME}}.app"
 
   run:
     desc: 构建并直接运行程序
