@@ -51,6 +51,7 @@ tasks:
           --icon "{{.PROJECT_NAME}}.app" 175 190 \
           --hide-extension "{{.PROJECT_NAME}}.app" \
           --app-drop-link 425 185 \
+          --background "assets/dmg-background.png" \
           "{{.DMG_PATH}}" \
           "{{.BUILD_DIR}}/dmg_stage/"
         rm -rf {{.BUILD_DIR}}/dmg_stage
